@@ -17,11 +17,15 @@ package org.dataportabilityproject.cloud.google;
 
 import static org.dataportabilityproject.shared.Config.Environment.LOCAL;
 
+import com.google.api.client.repackaged.com.google.common.base.Preconditions;
+import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import java.io.IOException;
+import org.dataportabilityproject.cloud.google.Annotations.ProjectId;
 import org.dataportabilityproject.shared.settings.CommonSettings;
 
 public class GoogleCloudModule extends AbstractModule {
@@ -59,4 +63,25 @@ public class GoogleCloudModule extends AbstractModule {
     }
   }
 
+  /**
+   * Get project ID from environment variable and validate it is set.
+   *
+   * @throws IllegalArgumentException if project ID is unset
+   */
+  @Provides @Singleton // TODO is this Singleton the culprit?
+  @ProjectId
+  String getProjectId() {
+    String projectId;
+    try {
+      projectId = System.getenv("GOOGLE_PROJECT_ID");
+    } catch (NullPointerException e) {
+      throw new IllegalArgumentException("Need to specify a project ID when using Google Cloud. "
+          + "This should be exposed as an environment variable by Kubernetes, see "
+          + "k8s/api-deployment.yaml");
+    }
+    Preconditions.checkArgument(!Strings.isNullOrEmpty(projectId), "Need to specify a project "
+        + "ID when using Google Cloud. This should be exposed as an environment variable by "
+        + "Kubernetes, see k8s/api-deployment.yaml");
+    return projectId.toLowerCase();
+  }
 }
