@@ -47,8 +47,14 @@ configure(sourceProjects()) {
     }
 
     apply plugin: 'java'
+    apply plugin: 'checkstyle'
 
     sourceCompatibility = 1.8
+
+    checkstyle {
+        configFile = file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+        toolVersion = "8.8"
+    }
 
     dependencies {
         compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
