@@ -11,8 +11,8 @@
 #
 # Must be run from the root source directory data-portability/
 
-if [[ $(pwd) != */data-portability ]]; then
-  echo "Please run out of /data-portability directory. Aborting."
+if [[ $(pwd) != */data-transfer-project ]]; then
+  echo "Please run out of /data-transfer-project directory. Aborting."
   exit 1
 fi
 
@@ -32,6 +32,10 @@ SRC_DIR="portability-$BINARY"
 DEBUG_PORT=5005
 if [[ $BINARY == "worker" ]]; then
   DEBUG_PORT=5006
+fi
+
+if [[ $BINARY == "gateway" ]]; then
+  SRC_DIR="portability-gateway"
 fi
 
 gradle=$(which gradle)|| { echo "Gradle (gradle) not found. Please install it and try again." >&2; exit 1; }
@@ -66,7 +70,7 @@ if [[ -e "${SRC_RESOURCES_PATH}/log4j.properties" ]]; then
   fi
 fi
 
-if [[ $BINARY == "api" ]]; then
+if [[ $BINARY == "api" || $BINARY == "gateway" ]]; then
   echo -e "Copying api.yaml from $SRC_SETTINGS_PATH to $DEST_SETTINGS_PATH"
   cp "${SRC_SETTINGS_PATH}api.yaml" "${DEST_SETTINGS_PATH}api.yaml"
   if [[ ! -e "${SRC_SETTINGS_PATH}api.yaml" ]]; then
