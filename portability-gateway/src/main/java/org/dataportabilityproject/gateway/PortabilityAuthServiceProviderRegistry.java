@@ -28,16 +28,21 @@ import org.dataportabilityproject.spi.gateway.auth.AuthServiceProviderRegistry;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PortabilityAuthServiceProviderRegistry implements AuthServiceProviderRegistry {
 
   private final ImmutableMap<String, AuthServiceProvider> authServiceProviderMap;
   private final ImmutableSet<String> supportedImportTypes;
   private final ImmutableSet<String> supportedExportTypes;
+  private static final Logger logger = LoggerFactory.getLogger(PortabilityAuthServiceProviderRegistry.class);
 
   @Inject
   public PortabilityAuthServiceProviderRegistry(
       Map<String, AuthServiceProvider> serviceProviderMap) {
+
+    logger.warn("Initializing PortabilityAuthServiceProviderRegistry");
     ImmutableMap.Builder<String, AuthServiceProvider> serviceProviderBuilder =
         ImmutableMap.builder();
     ImmutableSet.Builder<String> supportedImportTypesBuilder = ImmutableSet.builder();
@@ -45,6 +50,7 @@ public class PortabilityAuthServiceProviderRegistry implements AuthServiceProvid
 
     serviceProviderMap.forEach(
         (service, provider) -> {
+          logger.warn("Found service provider: {}", service);
           List<String> importTypes = provider.getImportTypes();
           List<String> exportTypes = provider.getExportTypes();
           for (String type : importTypes) {

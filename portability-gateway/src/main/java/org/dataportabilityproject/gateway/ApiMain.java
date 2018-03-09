@@ -20,6 +20,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.dataportabilityproject.gateway.reference.ReferenceApiModule;
 import org.dataportabilityproject.gateway.reference.ReferenceApiServer;
+import org.dataportabilityproject.spi.gateway.auth.AuthServiceProviderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ public class ApiMain {
   /** Starts the api server, currently the reference implementation. */
   public static void main(String[] args) throws Exception {
     logger.warn("Starting reference api server.");
+
     Thread.setDefaultUncaughtExceptionHandler(
         new UncaughtExceptionHandler() {
           @Override
@@ -44,7 +46,15 @@ public class ApiMain {
     // TODO: Support other server implementations, e.g. Jetty, Tomcat
     // TODO: Don't hardcode list of services
     Set<String> services = ImmutableSet.of("Microsoft");
+    Injector injector = Guice.createInjector(new PortabilityAuthServiceProviderModule(services));
+    AuthServiceProviderRegistry registry = injector.getInstance(AuthServiceProviderRegistry.class);
 
+    logger.warn("DataTypes: {}", registry.getTransferDataTypes());
+    for(String type : registry.getTransferDataTypes()){
+      logger.warn("services for {}: {}", type, registry.getServices(type));
+    }
+
+    /*
     Injector injector =
         Guice.createInjector(
             new PortabilityAuthServiceProviderModule(services), new ReferenceApiModule());
@@ -52,5 +62,6 @@ public class ApiMain {
     // Launch the application
     ReferenceApiServer server = injector.getInstance(ReferenceApiServer.class);
     server.start();
+    */
   }
 }

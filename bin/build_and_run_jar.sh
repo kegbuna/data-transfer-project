@@ -131,14 +131,13 @@ fi
 echo -e "\nCompiling and packaging...\n"
 
 gradle wrapper
-./gradlew clean build
+./gradlew clean :$SRC_DIR:build '-Pcloud_extension=portability-cloud-google' '-Pauth_extension=portability-auth-microsoft'
 
 # TODO: Exit in case of error compiling
 
 read -p "Would you like to run the app jar at this time? (Y/n): " response
 if [[ ! ${response} =~ ^(no|n| ) ]]; then
-#  COMMAND="java -jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=$DEBUG_PORT $SRC_DIR/build/libs/$SRC_DIR-1.0-SNAPSHOT.jar"
- COMMAND="java -jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=$DEBUG_PORT $SRC_DIR/build/libs/$SRC_DIR-1.0-SNAPSHOT.jar"
+ COMMAND="java -jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=$DEBUG_PORT $SRC_DIR/build/libs/$SRC_DIR-1.0-SNAPSHOT.jar extensions/auth/portability-auth-microsoft/build/libs/portability-auth-microsoft.jar"
 
   echo -e "running $COMMAND"
   $COMMAND

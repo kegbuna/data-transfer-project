@@ -36,6 +36,9 @@ jar {
 }
 
 dependencies {
+    if(project.hasProperty("cloud_extension")) compile project(':extensions:cloud:'+project.getProperty('cloud_extension'))
+    if(project.hasProperty("auth_extension")) compile project (':extensions:auth:' + project.getProperty('auth_extension'))
+
     compile project(':libraries:security')
     compile project(':portability-spi-cloud')
     compile project(':portability-spi-gateway')
